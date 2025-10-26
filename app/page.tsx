@@ -9,30 +9,24 @@ export default async function Page() {
   // // --- END FIX ---
 
 
-  // // 1. If the user is not logged in, send them to the sign-in page
-  // // Then check the .userId property
-  // if (!authData.userId) {
-  //   redirect("/sign-in");
-  // }
 
-  // // 2. Get the full user object to read their metadata
-  // const user = await currentUser();
-  // if (!user) {
-  //   // This is a safety check, should be covered by !userId
-  //   redirect("/sign-in");
-  // }
+  const { userId } = await auth();
+  if (!userId) {
+    redirect("/sign-in");
+  }
 
-  // // 3. Read the role from the public metadata we set in the Clerk Dashboard
-  // const role = user.publicMetadata?.role;
+  const user = await currentUser();
+  if (!user) {
+    redirect("/sign-in");
+  }
 
-  // // 4. Redirect based on the role
-  // if (role === "DRIVER") {
-  //   redirect("/driver");
-  // }
-
-  // if (role === "RTO") {
-  //   redirect("/rto");
-  // }
+  const role = (user.publicMetadata?.role as string | undefined) ?? undefined;
+  if (role === "DRIVER") {
+    redirect("/driver");
+  }
+  if (role === "RTO") {
+    redirect("/rto");
+  }
 
   // 5. (Fallback) If they are logged in but have no role assigned
   return (
